@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import br.com.igorcrrea.glpiticketalert.model.Data;
-import br.com.igorcrrea.glpiticketalert.model.RequestObject;
+import br.com.igorcrrea.glpiticketalert.model.Tickets;
 
 public class JsonParser {
 
@@ -17,7 +17,7 @@ public class JsonParser {
 
 		Gson gson = (new GsonBuilder()).create();
 
-		RequestObject objetos = gson.fromJson(json, RequestObject.class);
+		Tickets objetos = gson.fromJson(json, Tickets.class);
 
 		if(objetos.getData()==null) {
 			return new ArrayList<Data>();
@@ -25,7 +25,6 @@ public class JsonParser {
 			return objetos.getData();
 		}
 
-		//item.forEach(System.out::println);
 	}
 
 }
