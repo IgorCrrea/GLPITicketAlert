@@ -10,11 +10,6 @@ public class Data {
 	private String titulo;
 	@SerializedName("19")
 	private String data;
-	
-	@Override
-	public String toString() {
-		return "ID: "+id+" |Titulo: "+titulo+" |Data: "+data;
-	}
 
 	public Integer getId() {
 		return id;

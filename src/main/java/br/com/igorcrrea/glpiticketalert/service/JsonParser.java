@@ -13,15 +13,16 @@ import br.com.igorcrrea.glpiticketalert.model.Tickets;
 public class JsonParser {
 
 	public static List<Data> run() throws IOException, InterruptedException {
-		String json = ConnectionAPI.getJson();
 
+		String json = ConnectionAPI.getJson();
+		
 		Gson gson = (new GsonBuilder()).create();
 
 		Tickets objetos = gson.fromJson(json, Tickets.class);
-
-		if(objetos.getData()==null) {
+		
+		if (objetos.getData() == null) {
 			return new ArrayList<Data>();
-		}else {
+		} else {
 			return objetos.getData();
 		}
 
