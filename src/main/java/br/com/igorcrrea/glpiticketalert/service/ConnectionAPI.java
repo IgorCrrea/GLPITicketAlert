@@ -1,7 +1,6 @@
 package br.com.igorcrrea.glpiticketalert.service;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -44,7 +43,7 @@ public class ConnectionAPI {
 	}
 
 	
-	public static String getJson() throws ConnectException{
+	public static String getJson() throws IOException, InterruptedException{
 		
 		HttpClient client = HttpClient.newBuilder()
 			      .build();
@@ -56,12 +55,8 @@ public class ConnectionAPI {
 	            .build();
 		
 		HttpResponse<String> response;
-		try {
 			response = client.send(request, BodyHandlers.ofString());
 			return response.body();
-		} catch (IOException | InterruptedException e) {
-			throw new ConnectException();
-		}
 		
 	}
 
