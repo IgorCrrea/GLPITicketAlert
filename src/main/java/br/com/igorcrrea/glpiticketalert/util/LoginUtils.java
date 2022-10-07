@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class LoginUtils {
 
-    private static File file = new File("./loginInfo.txt");
+    private static final File file = new File("./loginInfo.iac");
 
     public static void writeFile(LoginInfosDTO infos) {
         try (PrintWriter writer = new PrintWriter(file)) {
@@ -27,7 +27,7 @@ public abstract class LoginUtils {
     public static LoginInfosDTO readFile() {
         try(FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)){
             String line;
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             while((line = br.readLine()) != null){
                 list.add(line);
             }
@@ -42,7 +42,7 @@ public abstract class LoginUtils {
         try {
             file.createNewFile();
         } catch (IOException ex) {
-
+            ex.printStackTrace();
         }
     }
 

@@ -24,12 +24,10 @@ public class Login extends Frame implements FramePattern{
 
     private final Integer HORIZONTAL_CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
     private final Integer VERTICAL_CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2;
-    private final Integer HEIGHT = 300;
-    private final Integer WIDTH = 250;
 
-    private JPanel urlPanel = new JPanel();
-    private JPanel userTokenPanel = new JPanel();
-    private JPanel appTokenPanel = new JPanel();
+    private final JPanel urlPanel = new JPanel();
+    private final JPanel userTokenPanel = new JPanel();
+    private final JPanel appTokenPanel = new JPanel();
 
     private final JPanel buttonPane = new JPanel();
     private final JButton done = new JButton("Done");
@@ -48,6 +46,8 @@ public class Login extends Frame implements FramePattern{
     @Override
     public void run() {
 
+        int HEIGHT = 300;
+        int WIDTH = 250;
         setBounds(HORIZONTAL_CENTER - WIDTH / 2, VERTICAL_CENTER / 2, WIDTH, HEIGHT);
 
         this.setExtendedState(NORMAL);

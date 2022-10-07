@@ -11,24 +11,15 @@ public class DataDTO {
 	}
 
 	@SerializedName("2")
-	private Integer id;
+	private final Integer id;
 	@SerializedName("1")
-	private String title;
+	private final String title;
 	@SerializedName("19")
-	private String data;
-
-	public Integer getId() {
-		return id;
-	}
+	private final String data;
 
 	public String getTitle() {
 		return title;
 	}
 
-	public String getData() {
-		return data;
-	}
-	
-	
-	
+
 }

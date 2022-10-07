@@ -20,7 +20,7 @@ public abstract class JsonParser {
 		TicketsDTO objects = gson.fromJson(json, TicketsDTO.class);
 		
 		if (objects.getData() == null) {
-			return new ArrayList<DataDTO>();
+			return new ArrayList<>();
 		} else {
 			return objects.getData();
 		}

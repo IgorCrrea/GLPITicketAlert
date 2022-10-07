@@ -1,6 +1,5 @@
 package br.com.igorcrrea.glpiticketalert.service;
 
-import br.com.igorcrrea.glpiticketalert.Properties;
 import br.com.igorcrrea.glpiticketalert.util.LoginUtils;
 
 import java.io.IOException;
@@ -12,13 +11,11 @@ import java.net.http.HttpResponse.BodyHandlers;
 
 public class ConnectionAPI {
 
-
-	private static final java.util.Properties PROP = Properties.getProp();
-
 	private static  String URL ;
+	@SuppressWarnings("FieldCanBeLocal")
 	private static String USER_TOKEN;
 	private static String APP_TOKEN;
-	private static String SESSION_TOKEN = OpenSession();
+	private static final String SESSION_TOKEN = OpenSession();
 
 	private static String OpenSession() {
 

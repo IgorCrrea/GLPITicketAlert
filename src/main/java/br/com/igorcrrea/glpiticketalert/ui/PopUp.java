@@ -1,8 +1,8 @@
 package br.com.igorcrrea.glpiticketalert.ui;
 
 import br.com.igorcrrea.glpiticketalert.Properties;
+import br.com.igorcrrea.glpiticketalert.interfaces.FramePattern;
 import br.com.igorcrrea.glpiticketalert.model.DataDTO;
-import br.com.igorcrrea.glpiticketalert.service.ConnectionAPI;
 import br.com.igorcrrea.glpiticketalert.service.JsonParser;
 
 import javax.swing.BorderFactory;
@@ -10,7 +10,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -18,16 +17,18 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.List;
 
-public class PopUp extends Frame implements Runnable{
+public class PopUp extends Frame implements FramePattern, Runnable{
 
+    @Serial
     private static final long serialVersionUID = 6160448917528208976L;
 
     // config.properties file properties
     private final java.util.Properties PROP = Properties.getProp();
     private final Integer Y = Integer.parseInt(PROP.getProperty("position.height"));
-    private final Integer TIME = Integer.parseInt(PROP.getProperty("update.tempoUpdate")) * 60 * 1000;
+    private final Integer TIME = Integer.parseInt(PROP.getProperty("update.updateTime")) * 60 * 1000;
 
     private final Integer CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
 
@@ -38,8 +39,6 @@ public class PopUp extends Frame implements Runnable{
 
     private Integer height;
     private Integer width;
-
-    private List<DataDTO> list;
 
     public PopUp() {
 
@@ -60,7 +59,7 @@ public class PopUp extends Frame implements Runnable{
     public void run() {
         while (true) {
             try {
-                list = JsonParser.run();
+                List<DataDTO> list = JsonParser.run();
 
                 if (list.size() == 0) {
                     setVisible(false);
@@ -90,7 +89,7 @@ public class PopUp extends Frame implements Runnable{
         removeAll();
 
         list.forEach(item -> {
-            String title = item.getTitle().toUpperCase();
+            String title = item.getTitle();
             addLabel(title);
             if (title.length() > width) {
                 width = title.length();
@@ -123,16 +122,6 @@ public class PopUp extends Frame implements Runnable{
         addLabel(error);
         add(buttonPane);
         setVisible(true);
-    }
-
-    private void close() {
-        Integer selectedOption = JOptionPane.showConfirmDialog(null, "Are You Sure?", "Close", JOptionPane.YES_NO_OPTION);
-
-        // yes = 0, no = 1
-        if (selectedOption == 0) {
-            ConnectionAPI.Kill();
-            System.exit(0);
-        }
     }
 
     private void createButton() {
