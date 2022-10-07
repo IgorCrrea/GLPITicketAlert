@@ -1,29 +1,28 @@
 package br.com.igorcrrea.glpiticketalert.service;
 
+import br.com.igorcrrea.glpiticketalert.model.DataDTO;
+import br.com.igorcrrea.glpiticketalert.model.TicketsDTO;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+public abstract class JsonParser {
 
-import br.com.igorcrrea.glpiticketalert.model.Data;
-import br.com.igorcrrea.glpiticketalert.model.Tickets;
-
-public class JsonParser {
-
-	public static List<Data> run() throws IOException, InterruptedException {
+	public static List<DataDTO> run() throws IOException, InterruptedException {
 
 		String json = ConnectionAPI.getJson();
 		
 		Gson gson = (new GsonBuilder()).create();
 
-		Tickets objetos = gson.fromJson(json, Tickets.class);
+		TicketsDTO objects = gson.fromJson(json, TicketsDTO.class);
 		
-		if (objetos.getData() == null) {
-			return new ArrayList<Data>();
+		if (objects.getData() == null) {
+			return new ArrayList<DataDTO>();
 		} else {
-			return objetos.getData();
+			return objects.getData();
 		}
 
 	}

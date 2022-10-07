@@ -1,14 +1,9 @@
 package br.com.igorcrrea.glpiticketalert.ui;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
+import br.com.igorcrrea.glpiticketalert.Properties;
+import br.com.igorcrrea.glpiticketalert.model.DataDTO;
+import br.com.igorcrrea.glpiticketalert.service.ConnectionAPI;
+import br.com.igorcrrea.glpiticketalert.service.JsonParser;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,141 +12,139 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.List;
 
-import com.google.gson.JsonSyntaxException;
+public class PopUp extends Frame implements Runnable{
 
-import br.com.igorcrrea.glpiticketalert.Propriedades;
-import br.com.igorcrrea.glpiticketalert.model.Data;
-import br.com.igorcrrea.glpiticketalert.service.ConnectionAPI;
-import br.com.igorcrrea.glpiticketalert.service.JsonParser;
+    private static final long serialVersionUID = 6160448917528208976L;
 
-public class PopUp extends Frame {
+    // config.properties file properties
+    private final java.util.Properties PROP = Properties.getProp();
+    private final Integer Y = Integer.parseInt(PROP.getProperty("position.height"));
+    private final Integer TIME = Integer.parseInt(PROP.getProperty("update.tempoUpdate")) * 60 * 1000;
 
-	private static final long serialVersionUID = 6160448917528208976L;
+    private final Integer CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
 
-	// Propriedades do arquivo config.properties
-	private final Properties PROP = Propriedades.getProp();
-	private final Integer Y = Integer.parseInt(PROP.getProperty("position.altura"));
-	private final Integer TIME = Integer.parseInt(PROP.getProperty("update.tempoUpdate")) * 60 * 1000;
+    // Buttons
+    private final JPanel buttonPane = new JPanel();
+    private final JButton hide = new JButton("Hide");
+    private final JButton close = new JButton("Close");
 
-	// Centro da tela
-	private final Integer CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
+    private Integer height;
+    private Integer width;
 
-	// Botoes
-	private final JPanel buttonPane = new JPanel();
-	private final JButton ocultar = new JButton("Ocultar");
-	private final JButton fechar = new JButton("Fechar");
+    private List<DataDTO> list;
 
-	// Altura e largura
-	private Integer heigth;
-	private Integer width;
+    public PopUp() {
 
-	private List<Data> lista;
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-	public PopUp() {
-		// Tira as bordas
-		setUndecorated(true);
+        createButton();
 
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                close();
+            }
+        });
 
-		createButton();
+        //run();
 
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				fechar();
-			}
-		});
+    }
 
-		run();
-	}
+    public void run() {
+        while (true) {
+            try {
+                list = JsonParser.run();
 
-	public void run() {
-		while (true) {
-			try {
-				lista = JsonParser.run();
+                if (list.size() == 0) {
+                    setVisible(false);
+                } else {
+                    update(list);
+                }
+            } catch (Exception e) {
+                error("Connection Error");
+            } finally {
 
-				if (lista.size() == 0) {
-					setVisible(false);
-				} else {
-					update(lista);
-				}
-			} catch (JsonSyntaxException | IOException | InterruptedException e) {
-				erro("Erro de Conexão");
-			} finally {
+                try {
+                    Thread.sleep(TIME);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
-				try {
-					Thread.sleep(TIME);
-					// Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 
-	public void update(List<Data> lista) {
-		width = 0;
-		heigth = 60;
-		this.setExtendedState(NORMAL);
+    public void update(List<DataDTO> list) {
+        width = 0;
+        height = 85;
+        this.setExtendedState(NORMAL);
 
-		setVisible(false);
-		removeAll();
+        setVisible(false);
+        removeAll();
 
-		lista.forEach(item -> {
-			String titulo = item.getTitulo();
-			addLabel(titulo);
-			if (titulo.length() > width) {
-				width = titulo.length();
-			}
-			heigth += 35;
-		});
+        list.forEach(item -> {
+            String title = item.getTitle().toUpperCase();
+            addLabel(title);
+            if (title.length() > width) {
+                width = title.length();
+            }
+            height += 35;
+        });
 
-		// Posicao e tamanho
-		setBounds(CENTER - ((width * 18) / 2), Y, width * 18, heigth);
+        //position and size
+        setBounds(CENTER - ((width * 20) / 2), Y, width * 20, height);
 
-		add(buttonPane);
-		setVisible(true);
-	}
+        add(buttonPane);
+        setVisible(true);
 
-	private void addLabel(String titulo) {
-		JLabel label = new JLabel(titulo);
-		label.setAlignmentX(CENTER_ALIGNMENT);
-		label.setFont(new Font("Arial", Font.BOLD, 30));
-		add(label);
-	}
+    }
 
-	private void erro(String erro) {
-		width = 14;
-		heigth = 80;
-		this.setExtendedState(NORMAL);
-		setVisible(false);
-		removeAll();
-		setBounds(CENTER - ((width * 18) / 2), Y, width * 18, heigth);
-		addLabel(erro);
-		add(buttonPane);
-		setVisible(true);
-	}
+    private void addLabel(String title) {
+        JLabel label = new JLabel(title);
+        label.setAlignmentX(CENTER_ALIGNMENT);
+        label.setFont(new Font("Arial", Font.BOLD, 30));
+        add(label);
+    }
 
-	private void fechar() {
-		Integer resposta = JOptionPane.showConfirmDialog(null, "Deseja Fechar?", "Fechar", JOptionPane.YES_NO_OPTION);
+    private void error(String error) {
+        width = 20;
+        height = 120;
+        this.setExtendedState(NORMAL);
+        setVisible(false);
+        removeAll();
+        setBounds(CENTER - ((width * 18) / 2), Y, width * 18, height);
+        addLabel(error);
+        add(buttonPane);
+        setVisible(true);
+    }
 
-		// sim = 0, nao = 1
-		if (resposta == 0) {
-			ConnectionAPI.Kill();
-			System.exit(0);
-		}
-	}
+    private void close() {
+        Integer selectedOption = JOptionPane.showConfirmDialog(null, "Are You Sure?", "Close", JOptionPane.YES_NO_OPTION);
 
-	private void createButton() {
-		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-		buttonPane.setBackground(getForeground());
-		buttonPane.add(fechar);
-		buttonPane.add(Box.createRigidArea(new Dimension(15, 0)));
-		buttonPane.add(ocultar);
+        // yes = 0, no = 1
+        if (selectedOption == 0) {
+            ConnectionAPI.Kill();
+            System.exit(0);
+        }
+    }
 
-		ocultar.addActionListener(e -> this.setExtendedState(ICONIFIED));
-		fechar.addActionListener(e -> fechar());
-	}
+    private void createButton() {
+        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
+        buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        buttonPane.setBackground(getForeground());
+        buttonPane.add(close);
+        buttonPane.add(Box.createRigidArea(new Dimension(15, 0)));
+        buttonPane.add(hide);
+
+        hide.addActionListener(e -> this.setExtendedState(ICONIFIED));
+        close.addActionListener(e -> close());
+    }
 
 }

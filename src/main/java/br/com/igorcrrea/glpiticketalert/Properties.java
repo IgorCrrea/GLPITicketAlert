@@ -1,14 +1,13 @@
 package br.com.igorcrrea.glpiticketalert;
 
 import java.io.FileInputStream;
-import java.util.Properties;
 
-public class Propriedades {
+public class Properties {
 
-	public static Properties getProp() {
+	public static java.util.Properties getProp() {
 
 		try (FileInputStream file = new FileInputStream("./config.properties")) {
-			Properties props = new Properties();
+			java.util.Properties props = new java.util.Properties();
 			props.load(file);
 			return props;
 			

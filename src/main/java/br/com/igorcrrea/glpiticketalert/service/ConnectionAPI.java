@@ -1,26 +1,38 @@
 package br.com.igorcrrea.glpiticketalert.service;
 
+import br.com.igorcrrea.glpiticketalert.Properties;
+import br.com.igorcrrea.glpiticketalert.util.LoginUtils;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.Properties;
-
-import br.com.igorcrrea.glpiticketalert.Propriedades;
 
 public class ConnectionAPI {
 
-	private static final Properties PROP = Propriedades.getProp();
 
-	private static final String URL = PROP.getProperty("server.urlAPI");
+	private static final java.util.Properties PROP = Properties.getProp();
 
-	private static final String USER_TOKEN = PROP.getProperty("server.userToken");
-	private static final String APP_TOKEN = PROP.getProperty("server.appToken");
-	private static final String SESSION_TOKEN = OpenSession();
+	private static  String URL ;
+	private static String USER_TOKEN;
+	private static String APP_TOKEN;
+	private static String SESSION_TOKEN = OpenSession();
 
 	private static String OpenSession() {
+
+		if (LoginUtils.readFile().getUrl() == null || LoginUtils.readFile().getUrl().length() < 1){
+			URL = "http://localhost/";
+		}else {URL = LoginUtils.readFile().getUrl();}
+
+		if (LoginUtils.readFile().getUserToken() == null || LoginUtils.readFile().getUserToken().length() < 1){
+			USER_TOKEN = "NoToken";
+		}else {USER_TOKEN = LoginUtils.readFile().getUserToken();}
+
+		if (LoginUtils.readFile().getAppToken() == null || LoginUtils.readFile().getAppToken().length() < 1){
+			APP_TOKEN = "NoToken";
+		}else {APP_TOKEN = LoginUtils.readFile().getAppToken();}
 
 		HttpClient client = HttpClient.newBuilder().build();
 
@@ -30,14 +42,14 @@ public class ConnectionAPI {
 		HttpResponse<String> response;
 		try {
 			response = client.send(request, BodyHandlers.ofString());
-			String corpoResposta = response.body();
+			String responseBody = response.body();
 
-			String[] resposta = corpoResposta.split("\":\"");
+			String[] parsedResponse = responseBody.split("\":\"");
 
-			return resposta[1].substring(0, resposta[1].length() - 2);
+			return parsedResponse[1].substring(0, parsedResponse[1].length() - 2);
 
 		} catch (IOException | InterruptedException | ArrayIndexOutOfBoundsException e) {
-			return "erro";
+			return "error";
 		}
 
 	}
@@ -72,7 +84,7 @@ public class ConnectionAPI {
 		try {
 			client.send(request, BodyHandlers.ofString());
 		} catch (IOException | InterruptedException e) {
-			throw new RuntimeException();
+			System.exit(0);
 		}
 	}
 
