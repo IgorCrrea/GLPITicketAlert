@@ -2,9 +2,9 @@ package br.com.igorcrrea.glpiticketalert.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DataDTO {
+public class Data {
 
-	public DataDTO(Integer id, String title, String data) {
+	public Data(Integer id, String title, String data) {
 		this.id = id;
 		this.title = title;
 		this.data = data;

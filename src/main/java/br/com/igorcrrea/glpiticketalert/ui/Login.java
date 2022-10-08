@@ -2,7 +2,7 @@ package br.com.igorcrrea.glpiticketalert.ui;
 
 
 import br.com.igorcrrea.glpiticketalert.interfaces.FramePattern;
-import br.com.igorcrrea.glpiticketalert.util.LoginInfosDTO;
+import br.com.igorcrrea.glpiticketalert.model.Configurations;
 import br.com.igorcrrea.glpiticketalert.util.LoginUtils;
 
 import javax.swing.BorderFactory;
@@ -34,13 +34,14 @@ public class Login extends Frame implements FramePattern{
     private final JButton close = new JButton("Close");
 
 
+
+
     public Login() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {close();}
         });
-        run();
     }
 
     @Override
@@ -86,11 +87,11 @@ public class Login extends Frame implements FramePattern{
             String inputAppTokenText = inputAppToken.getText();
             String inputUserTokenText = inputUserToken.getText();
 
-            LoginInfosDTO loginInfosDTO = new LoginInfosDTO(inputUrlPanelText, inputAppTokenText, inputUserTokenText);
-            LoginUtils.writeFile(loginInfosDTO);
+            Configurations configurations = new Configurations(inputUrlPanelText, inputAppTokenText, inputUserTokenText);
+            LoginUtils.writeFile(configurations);
 
             PopUp popUp = new PopUp();
-            Thread popUpThread = new Thread(popUp, "PopUp");
+            Thread popUpThread = new Thread(popUp, "PopUp Thread");
             popUpThread.start();
 
             this.dispose();

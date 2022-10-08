@@ -1,6 +1,4 @@
-package br.com.igorcrrea.glpiticketalert.service;
-
-import br.com.igorcrrea.glpiticketalert.util.LoginUtils;
+package br.com.igorcrrea.glpiticketalert.util;
 
 import java.io.IOException;
 import java.net.URI;

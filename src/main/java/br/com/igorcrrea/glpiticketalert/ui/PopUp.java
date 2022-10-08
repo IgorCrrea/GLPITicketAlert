@@ -2,8 +2,8 @@ package br.com.igorcrrea.glpiticketalert.ui;
 
 import br.com.igorcrrea.glpiticketalert.util.Properties;
 import br.com.igorcrrea.glpiticketalert.interfaces.FramePattern;
-import br.com.igorcrrea.glpiticketalert.model.DataDTO;
-import br.com.igorcrrea.glpiticketalert.service.JsonParser;
+import br.com.igorcrrea.glpiticketalert.model.Data;
+import br.com.igorcrrea.glpiticketalert.util.JsonParser;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,7 +20,7 @@ import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.List;
 
-public class PopUp extends Frame implements FramePattern, Runnable{
+public class PopUp extends Frame implements FramePattern{
 
     @Serial
     private static final long serialVersionUID = 6160448917528208976L;
@@ -40,6 +40,8 @@ public class PopUp extends Frame implements FramePattern, Runnable{
     private Integer height;
     private Integer width;
 
+    private final JsonParser jsonParser = new JsonParser();
+
     public PopUp() {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -57,7 +59,7 @@ public class PopUp extends Frame implements FramePattern, Runnable{
     public void run() {
         while (true) {
             try {
-                List<DataDTO> list = JsonParser.parseData();
+                List<Data> list = jsonParser.parseData();
 
                 if (list.size() == 0) {
                     setVisible(false);
@@ -78,7 +80,7 @@ public class PopUp extends Frame implements FramePattern, Runnable{
     }
 
 
-    public void update(List<DataDTO> list) {
+    public void update(List<Data> list) {
         width = 0;
         height = 85;
         this.setExtendedState(NORMAL);
