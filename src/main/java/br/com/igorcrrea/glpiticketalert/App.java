@@ -5,7 +5,7 @@ import br.com.igorcrrea.glpiticketalert.ui.Login;
 public class App {
 
 	public static void main(String[] args) {
-		Thread thread = new Thread(new Login(), "Login Thread");
+		Thread thread = new Thread(new Login());
 		thread.start();
 	}
 }
