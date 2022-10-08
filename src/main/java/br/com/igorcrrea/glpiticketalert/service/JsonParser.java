@@ -2,6 +2,7 @@ package br.com.igorcrrea.glpiticketalert.service;
 
 import br.com.igorcrrea.glpiticketalert.model.DataDTO;
 import br.com.igorcrrea.glpiticketalert.model.TicketsDTO;
+import br.com.igorcrrea.glpiticketalert.util.LoginInfosDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 public abstract class JsonParser {
 
-	public static List<DataDTO> run() throws IOException, InterruptedException {
+	public static List<DataDTO> parseData() throws IOException, InterruptedException {
 
 		String json = ConnectionAPI.getJson();
 		
@@ -27,4 +28,12 @@ public abstract class JsonParser {
 
 	}
 
+	public static String creteConfigJson(LoginInfosDTO infos){
+		Gson gson = (new GsonBuilder()).create();
+		return gson.toJson(infos, LoginInfosDTO.class);
+	}
+	public static LoginInfosDTO readConfig(String json) {
+		Gson gson = (new GsonBuilder()).create();
+		return gson.fromJson(json, LoginInfosDTO.class);
+	}
 }

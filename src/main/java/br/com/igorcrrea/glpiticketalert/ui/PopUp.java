@@ -1,6 +1,6 @@
 package br.com.igorcrrea.glpiticketalert.ui;
 
-import br.com.igorcrrea.glpiticketalert.Properties;
+import br.com.igorcrrea.glpiticketalert.util.Properties;
 import br.com.igorcrrea.glpiticketalert.interfaces.FramePattern;
 import br.com.igorcrrea.glpiticketalert.model.DataDTO;
 import br.com.igorcrrea.glpiticketalert.service.JsonParser;
@@ -52,14 +52,12 @@ public class PopUp extends Frame implements FramePattern, Runnable{
             }
         });
 
-        //run();
-
     }
 
     public void run() {
         while (true) {
             try {
-                List<DataDTO> list = JsonParser.run();
+                List<DataDTO> list = JsonParser.parseData();
 
                 if (list.size() == 0) {
                     setVisible(false);

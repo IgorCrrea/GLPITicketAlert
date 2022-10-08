@@ -1,4 +1,4 @@
-package br.com.igorcrrea.glpiticketalert;
+package br.com.igorcrrea.glpiticketalert.util;
 
 import java.io.FileInputStream;
 
