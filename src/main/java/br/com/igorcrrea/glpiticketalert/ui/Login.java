@@ -3,6 +3,7 @@ package br.com.igorcrrea.glpiticketalert.ui;
 
 import br.com.igorcrrea.glpiticketalert.interfaces.FramePattern;
 import br.com.igorcrrea.glpiticketalert.model.Configurations;
+import br.com.igorcrrea.glpiticketalert.util.ConnectionAPI;
 import br.com.igorcrrea.glpiticketalert.util.LoginUtils;
 
 import javax.swing.BorderFactory;
@@ -24,21 +25,15 @@ public class Login extends Frame implements FramePattern{
 
     private final Integer HORIZONTAL_CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
     private final Integer VERTICAL_CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2;
-
     private final JPanel urlPanel = new JPanel();
     private final JPanel userTokenPanel = new JPanel();
     private final JPanel appTokenPanel = new JPanel();
-
     private final JPanel buttonPane = new JPanel();
     private final JButton done = new JButton("Done");
     private final JButton close = new JButton("Close");
 
-
-
-
     public Login() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {close();}
         });
@@ -47,32 +42,20 @@ public class Login extends Frame implements FramePattern{
     @Override
     public void run() {
 
-        int HEIGHT = 300;
-        int WIDTH = 250;
-        setBounds(HORIZONTAL_CENTER - WIDTH / 2, VERTICAL_CENTER / 2, WIDTH, HEIGHT);
+        int height = 300;
+        int width = 250;
+        setBounds(HORIZONTAL_CENTER - width / 2, VERTICAL_CENTER / 2, width, height);
 
         this.setExtendedState(NORMAL);
 
         JTextField inputUrlPanel = new JTextField(LoginUtils.readFile().getUrl());
-        urlPanel.setLayout(new GridLayout(2,1));
-        urlPanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 0, 10));
-        urlPanel.setBackground(getForeground());
-        urlPanel.add(createLabel("URL:", 13));
-        urlPanel.add(inputUrlPanel);
+        createField(inputUrlPanel, urlPanel, "URL:");
 
         JTextField inputUserToken = new JTextField(LoginUtils.readFile().getUserToken());
-        userTokenPanel.setLayout(new GridLayout(2,1));
-        userTokenPanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 0, 10));
-        userTokenPanel.setBackground(getForeground());
-        userTokenPanel.add(createLabel("User Token:", 13));
-        userTokenPanel.add(inputUserToken);
+        createField(inputUserToken, userTokenPanel, "User Token:");
 
         JTextField inputAppToken = new JTextField(LoginUtils.readFile().getAppToken());
-        appTokenPanel.setLayout(new GridLayout(2,1));
-        appTokenPanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
-        appTokenPanel.setBackground(getForeground());
-        appTokenPanel.add(createLabel("App Token:", 13));
-        appTokenPanel.add(inputAppToken);
+        createField(inputAppToken, appTokenPanel, "App Token:");
 
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -83,22 +66,26 @@ public class Login extends Frame implements FramePattern{
 
         done.addActionListener(e -> {
 
+            //Get input texts
             String inputUrlPanelText = inputUrlPanel.getText();
             String inputAppTokenText = inputAppToken.getText();
             String inputUserTokenText = inputUserToken.getText();
 
+            //Configure credentials
             Configurations configurations = new Configurations(inputUrlPanelText, inputAppTokenText, inputUserTokenText);
             LoginUtils.writeFile(configurations);
+            ConnectionAPI.updateSession();
 
+            //Render PopUp Screen
             PopUp popUp = new PopUp();
             Thread popUpThread = new Thread(popUp, "PopUp Thread");
             popUpThread.start();
-
             this.dispose();
         });
+
         close.addActionListener(e -> close());
 
-        this.add(createLabel("Configuration Screen", 15));
+        this.add(createLabel("Configuration", 15));
         this.add(urlPanel);
         this.add(userTokenPanel);
         this.add(appTokenPanel);
@@ -112,6 +99,14 @@ public class Login extends Frame implements FramePattern{
         label.setAlignmentX(CENTER_ALIGNMENT);
         label.setFont(new Font("Arial", Font.BOLD, fontSize));
         return label;
+    }
+
+    private void createField(JTextField textField, JPanel panel, String title){
+        panel.setLayout(new GridLayout(2,1));
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 10, 0, 10));
+        panel.setBackground(getForeground());
+        panel.add(createLabel(title, 13));
+        panel.add(textField);
     }
 
 }

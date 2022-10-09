@@ -1,9 +1,9 @@
 package br.com.igorcrrea.glpiticketalert.ui;
 
-import br.com.igorcrrea.glpiticketalert.util.Properties;
 import br.com.igorcrrea.glpiticketalert.interfaces.FramePattern;
 import br.com.igorcrrea.glpiticketalert.model.Data;
 import br.com.igorcrrea.glpiticketalert.util.JsonParser;
+import br.com.igorcrrea.glpiticketalert.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -28,7 +28,7 @@ public class PopUp extends Frame implements FramePattern{
     // config.properties file properties
     private final java.util.Properties PROP = Properties.getProp();
     private final Integer Y = Integer.parseInt(PROP.getProperty("position.height"));
-    private final Integer TIME = Integer.parseInt(PROP.getProperty("update.updateTime")) * 60 * 1000;
+    private final Integer TIME = Integer.parseInt(PROP.getProperty("update.updateTime")) * 60 * 300;
 
     private final Integer CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
 
@@ -36,6 +36,10 @@ public class PopUp extends Frame implements FramePattern{
     private final JPanel buttonPane = new JPanel();
     private final JButton hide = new JButton("Hide");
     private final JButton close = new JButton("Close");
+
+    private final JButton config = new JButton("Config");
+
+    private Boolean running = Boolean.TRUE;
 
     private Integer height;
     private Integer width;
@@ -46,7 +50,7 @@ public class PopUp extends Frame implements FramePattern{
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        createButton();
+        createButtons();
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -57,10 +61,9 @@ public class PopUp extends Frame implements FramePattern{
     }
 
     public void run() {
-        while (true) {
+        while (running) {
             try {
                 List<Data> list = jsonParser.parseData();
-
                 if (list.size() == 0) {
                     setVisible(false);
                 } else {
@@ -75,6 +78,7 @@ public class PopUp extends Frame implements FramePattern{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.gc();
             }
         }
     }
@@ -124,16 +128,26 @@ public class PopUp extends Frame implements FramePattern{
         setVisible(true);
     }
 
-    private void createButton() {
+    private void createButtons() {
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         buttonPane.setBackground(getForeground());
         buttonPane.add(close);
         buttonPane.add(Box.createRigidArea(new Dimension(15, 0)));
         buttonPane.add(hide);
+        buttonPane.add(Box.createRigidArea(new Dimension(15, 0)));
+        buttonPane.add(config);
 
         hide.addActionListener(e -> this.setExtendedState(ICONIFIED));
+
         close.addActionListener(e -> close());
+
+        config.addActionListener(e -> {
+            Thread thread = new Thread(new Login());
+            thread.start();
+            this.dispose();
+            running = Boolean.FALSE;
+        });
     }
 
 }

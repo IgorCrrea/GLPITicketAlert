@@ -13,21 +13,11 @@ public class ConnectionAPI {
 	@SuppressWarnings("FieldCanBeLocal")
 	private static String USER_TOKEN;
 	private static String APP_TOKEN;
-	private static final String SESSION_TOKEN = OpenSession();
+	private static String SESSION_TOKEN;
 
 	private static String OpenSession() {
 
-		if (LoginUtils.readFile().getUrl() == null || LoginUtils.readFile().getUrl().length() < 1){
-			URL = "http://localhost/";
-		}else {URL = LoginUtils.readFile().getUrl();}
-
-		if (LoginUtils.readFile().getUserToken() == null || LoginUtils.readFile().getUserToken().length() < 1){
-			USER_TOKEN = "NoToken";
-		}else {USER_TOKEN = LoginUtils.readFile().getUserToken();}
-
-		if (LoginUtils.readFile().getAppToken() == null || LoginUtils.readFile().getAppToken().length() < 1){
-			APP_TOKEN = "NoToken";
-		}else {APP_TOKEN = LoginUtils.readFile().getAppToken();}
+		configValidation();
 
 		HttpClient client = HttpClient.newBuilder().build();
 
@@ -46,12 +36,23 @@ public class ConnectionAPI {
 		} catch (IOException | InterruptedException | ArrayIndexOutOfBoundsException e) {
 			return "error";
 		}
-
 	}
 
-	
+	private static void configValidation() {
+		if (LoginUtils.readFile().getUrl() == null || LoginUtils.readFile().getUrl().length() < 1){
+			URL = "http://localhost/";
+		}else {URL = LoginUtils.readFile().getUrl();}
+
+		if (LoginUtils.readFile().getUserToken() == null || LoginUtils.readFile().getUserToken().length() < 1){
+			USER_TOKEN = "NoToken";
+		}else {USER_TOKEN = LoginUtils.readFile().getUserToken();}
+
+		if (LoginUtils.readFile().getAppToken() == null || LoginUtils.readFile().getAppToken().length() < 1){
+			APP_TOKEN = "NoToken";
+		}else {APP_TOKEN = LoginUtils.readFile().getAppToken();}
+	}
+
 	public static String getJson() throws IOException, InterruptedException{
-		
 		HttpClient client = HttpClient.newBuilder()
 			      .build();
 		
@@ -68,6 +69,7 @@ public class ConnectionAPI {
 	}
 
 	public static void Kill() {
+		try {
 		HttpClient client = HttpClient.newBuilder()
 				.build();
 
@@ -76,11 +78,15 @@ public class ConnectionAPI {
 				.headers("App-Token", APP_TOKEN,"Session-Token", SESSION_TOKEN)
 				.GET()
 				.build();
-		try {
+
 			client.send(request, BodyHandlers.ofString());
-		} catch (IOException | InterruptedException e) {
+		} catch (Exception e) {
 			System.exit(0);
 		}
+	}
+
+	public static String updateSession(){
+		return SESSION_TOKEN = OpenSession();
 	}
 
 }
