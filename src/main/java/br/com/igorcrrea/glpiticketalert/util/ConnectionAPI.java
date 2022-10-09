@@ -9,20 +9,18 @@ import java.net.http.HttpResponse.BodyHandlers;
 
 public class ConnectionAPI {
 
-	private static  String URL ;
-	@SuppressWarnings("FieldCanBeLocal")
-	private static String USER_TOKEN;
-	private static String APP_TOKEN;
+	private static  String url;
+	private static String userToken;
+	private static String appToken;
 	private static String SESSION_TOKEN;
 
 	private static String OpenSession() {
-
-		configValidation();
+		setCredentials();
 
 		HttpClient client = HttpClient.newBuilder().build();
 
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(URL + "/apirest.php/initSession?"))
-				.headers("App-Token", APP_TOKEN, "Authorization", "user_token " + USER_TOKEN).GET().build();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url + "/apirest.php/initSession?"))
+				.headers("App-Token", appToken, "Authorization", "user_token " + userToken).GET().build();
 
 		HttpResponse<String> response;
 		try {
@@ -38,18 +36,13 @@ public class ConnectionAPI {
 		}
 	}
 
-	private static void configValidation() {
-		if (LoginUtils.readFile().getUrl() == null || LoginUtils.readFile().getUrl().length() < 1){
-			URL = "http://localhost/";
-		}else {URL = LoginUtils.readFile().getUrl();}
-
-		if (LoginUtils.readFile().getUserToken() == null || LoginUtils.readFile().getUserToken().length() < 1){
-			USER_TOKEN = "NoToken";
-		}else {USER_TOKEN = LoginUtils.readFile().getUserToken();}
-
-		if (LoginUtils.readFile().getAppToken() == null || LoginUtils.readFile().getAppToken().length() < 1){
-			APP_TOKEN = "NoToken";
-		}else {APP_TOKEN = LoginUtils.readFile().getAppToken();}
+	private static void setCredentials() {
+		url = LoginUtils.readFile().getUrl();
+		userToken = LoginUtils.readFile().getUserToken();
+		appToken = LoginUtils.readFile().getAppToken();
+		if(url.isBlank()){
+			url = "http://localhost/";
+		}
 	}
 
 	public static String getJson() throws IOException, InterruptedException{
@@ -57,8 +50,8 @@ public class ConnectionAPI {
 			      .build();
 		
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(URL+ "/apirest.php/search/Ticket?is_deleted=0&itemtype=Ticket&sort=158&start=0&criteria[0][field]=12&criteria[0][searchtype]=equals&criteria[0][value]=1&criteria[0][link]=AND"))
-	            .headers("Content-Type", "application/json","Session-Token",SESSION_TOKEN,"App-Token",APP_TOKEN)
+				.uri(URI.create(url + "/apirest.php/search/Ticket?is_deleted=0&itemtype=Ticket&sort=158&start=0&criteria[0][field]=12&criteria[0][searchtype]=equals&criteria[0][value]=1&criteria[0][link]=AND"))
+	            .headers("Content-Type", "application/json","Session-Token",SESSION_TOKEN,"App-Token", appToken)
 	            .GET()
 	            .build();
 		
@@ -74,8 +67,8 @@ public class ConnectionAPI {
 				.build();
 
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(URL + "/apirest.php/killSession?"))
-				.headers("App-Token", APP_TOKEN,"Session-Token", SESSION_TOKEN)
+				.uri(URI.create(url + "/apirest.php/killSession?"))
+				.headers("App-Token", appToken,"Session-Token", SESSION_TOKEN)
 				.GET()
 				.build();
 

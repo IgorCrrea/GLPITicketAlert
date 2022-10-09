@@ -7,25 +7,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JsonParser {
 
-	public List<Data> parseData() throws IOException, InterruptedException {
-
-		String json = ConnectionAPI.getJson();
-		
+	public Optional<List<Data>> parseData() throws IOException, InterruptedException {
 		Gson gson = (new GsonBuilder()).create();
+		Tickets tickets = gson.fromJson(ConnectionAPI.getJson(), Tickets.class);
 
-		Tickets objects = gson.fromJson(json, Tickets.class);
-		
-		if (objects.getData() == null) {
-			return new ArrayList<>();
-		} else {
-			return objects.getData();
+		if (tickets.getData() == null){
+			return Optional.empty();
 		}
-
+		return Optional.of(tickets.getData());
 	}
 
 	public String creteConfigJson(Configurations infos){

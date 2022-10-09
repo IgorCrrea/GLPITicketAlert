@@ -25,6 +25,8 @@ public class Login extends Frame implements FramePattern{
 
     private final Integer HORIZONTAL_CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
     private final Integer VERTICAL_CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2;
+    private final Integer HEIGTH = 300;
+    private final Integer WIDTH = 250;
     private final JPanel urlPanel = new JPanel();
     private final JPanel userTokenPanel = new JPanel();
     private final JPanel appTokenPanel = new JPanel();
@@ -41,10 +43,7 @@ public class Login extends Frame implements FramePattern{
 
     @Override
     public void run() {
-
-        int height = 300;
-        int width = 250;
-        setBounds(HORIZONTAL_CENTER - width / 2, VERTICAL_CENTER / 2, width, height);
+        setBounds(HORIZONTAL_CENTER - WIDTH / 2, VERTICAL_CENTER / 2, WIDTH, HEIGTH);
 
         this.setExtendedState(NORMAL);
 
@@ -64,8 +63,8 @@ public class Login extends Frame implements FramePattern{
         buttonPane.add(Box.createRigidArea(new Dimension(15, 0)));
         buttonPane.add(close);
 
+        close.addActionListener(e -> close());
         done.addActionListener(e -> {
-
             //Get input texts
             String inputUrlPanelText = inputUrlPanel.getText();
             String inputAppTokenText = inputAppToken.getText();
@@ -82,8 +81,6 @@ public class Login extends Frame implements FramePattern{
             popUpThread.start();
             this.dispose();
         });
-
-        close.addActionListener(e -> close());
 
         this.add(createLabel("Configuration", 15));
         this.add(urlPanel);

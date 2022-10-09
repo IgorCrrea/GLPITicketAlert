@@ -25,60 +25,44 @@ public class PopUp extends Frame implements FramePattern{
     @Serial
     private static final long serialVersionUID = 6160448917528208976L;
 
-    // config.properties file properties
     private final java.util.Properties PROP = Properties.getProp();
     private final Integer Y = Integer.parseInt(PROP.getProperty("position.height"));
     private final Integer TIME = Integer.parseInt(PROP.getProperty("update.updateTime")) * 60 * 300;
-
     private final Integer CENTER = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2;
-
-    // Buttons
     private final JPanel buttonPane = new JPanel();
     private final JButton hide = new JButton("Hide");
     private final JButton close = new JButton("Close");
-
     private final JButton config = new JButton("Config");
-
     private Boolean running = Boolean.TRUE;
-
     private Integer height;
     private Integer width;
-
     private final JsonParser jsonParser = new JsonParser();
 
     public PopUp() {
-
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        createButtons();
-
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 close();
             }
         });
-
     }
 
     public void run() {
+        createButtons();
+
         while (running) {
             try {
-                List<Data> list = jsonParser.parseData();
-                if (list.size() == 0) {
-                    setVisible(false);
-                } else {
-                    update(list);
-                }
+                if(jsonParser.parseData().isPresent()){update(jsonParser.parseData().get());}
+                else {setVisible(false);}
             } catch (Exception e) {
                 error("Connection Error");
             } finally {
-
+                System.gc();
                 try {
                     Thread.sleep(TIME);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.gc();
             }
         }
     }
@@ -88,8 +72,6 @@ public class PopUp extends Frame implements FramePattern{
         width = 0;
         height = 85;
         this.setExtendedState(NORMAL);
-
-        setVisible(false);
         removeAll();
 
         list.forEach(item -> {
@@ -101,12 +83,9 @@ public class PopUp extends Frame implements FramePattern{
             height += 35;
         });
 
-        //position and size
         setBounds(CENTER - ((width * 20) / 2), Y, width * 20, height);
-
         add(buttonPane);
         setVisible(true);
-
     }
 
     private void addLabel(String title) {
